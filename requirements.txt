@@ -38,6 +38,7 @@ stqdm
 # Security and authentication
 bcrypt
 cryptography
+passlib
 
 # Optional: Advanced NLP models (multilingual support)
 # sentence-transformers[paraphrase-multilingual-mpnet-base-v2]
