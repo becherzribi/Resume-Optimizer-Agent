@@ -20,35 +20,35 @@ torchvision
 torchaudio
 
 # Vector search and similarity
-faiss-cpu==
-faiss-gpu==
-numpy==
+faiss-cpu
+faiss-gpu
+numpy
 
 # Database and caching
 sqlite3  # Built into Python
-joblib==
-pickle5==
+joblib
+pickle5
 
 # Utilities and data processing
-pandas==
-regex==
-python-dotenv==
+pandas
+regex
+python-dotenv
 
 # Progress bars and UI enhancements
-tqdm==
-stqdm==
+tqdm
+stqdm
 
 # Security and authentication
-bcrypt==
-cryptography==
+bcrypt
+cryptography
 
 # Optional: Advanced NLP models (multilingual support)
 # sentence-transformers[paraphrase-multilingual-mpnet-base-v2]
 
 # Development and testing dependencies (optional)
-pytest==
-black==
-flake8==
+pytest
+black
+flake8
 
 # Optional: Additional model support
 # accelerate # For faster model loading
