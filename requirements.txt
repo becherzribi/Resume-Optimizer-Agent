@@ -24,7 +24,6 @@ faiss-cpu
 numpy
 
 # Database and caching
-sqlite3  # Built into Python
 joblib
 pickle5
 
