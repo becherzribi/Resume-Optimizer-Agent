@@ -1,0 +1,54 @@
+# Core Streamlit and web framework
+streamlit==1.28.1
+streamlit-authenticator==0.2.3
+
+# PDF processing
+PyMuPDF==1.23.8
+reportlab==4.0.4
+
+# LLM and AI frameworks
+langchain==0.0.335
+langchain-community==0.0.38
+ollama==0.1.7
+
+# Machine learning and NLP
+scikit-learn==1.3.2
+sentence-transformers==2.2.2
+transformers==4.35.2
+torch>=2.0.0
+torchvision
+torchaudio
+
+# Vector search and similarity
+faiss-cpu==1.7.4
+faiss-gpu==1.7.4  
+numpy==1.24.4
+
+# Database and caching
+sqlite3  # Built into Python
+joblib==1.3.2
+pickle5==0.0.12
+
+# Utilities and data processing
+pandas==2.1.3
+regex==2023.10.3
+python-dotenv==1.0.0
+
+# Progress bars and UI enhancements
+tqdm==4.66.1
+stqdm==0.0.5
+
+# Security and authentication
+bcrypt==4.1.1
+cryptography==41.0.8
+
+# Optional: Advanced NLP models (multilingual support)
+# sentence-transformers[paraphrase-multilingual-mpnet-base-v2]
+
+# Development and testing dependencies (optional)
+pytest==7.4.3
+black==23.11.0
+flake8==6.1.0
+
+# Optional: Additional model support
+# accelerate==0.25.0  # For faster model loading
