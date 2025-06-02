@@ -21,7 +21,6 @@ torchaudio
 
 # Vector search and similarity
 faiss-cpu
-faiss-gpu
 numpy
 
 # Database and caching
