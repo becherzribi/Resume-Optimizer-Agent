@@ -47,5 +47,7 @@ pytest
 black
 flake8
 
+structlog
+
 # Optional: Additional model support
 # accelerate # For faster model loading
