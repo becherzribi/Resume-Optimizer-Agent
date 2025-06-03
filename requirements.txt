@@ -1,54 +1,41 @@
 # Core Streamlit and web framework
 streamlit
-streamlit-authenticator
 
 # PDF processing
-PyMuPDF
+PyMuPDF # for fitz
 reportlab
 
 # LLM and AI frameworks
-langchain
-langchain-community
-ollama
+langchain-community # For Ollama and other community integrations
+langchain # Core Langchain (often pulled by langchain-community or useful for other LC features)
+ollama # The Python client for Ollama
 
 # Machine learning and NLP
-scikit-learn
-sentence-transformers
-transformers
-torch
-torchvision
-torchaudio
+scikit-learn # For CountVectorizer, cosine_similarity
+sentence-transformers # For semantic search embeddings
+torch # Essential for sentence-transformers and FAISS
 
 # Vector search and similarity
-faiss-cpu
-numpy
+faiss-cpu # For local CPU-based vector search (use faiss-gpu if targeting GPU)
+numpy # Dependency for many ML/numerical libraries
 
-# Database and caching
-joblib
+# Database (SQLite is built-in, no external package needed for sqlite3)
 
 # Utilities and data processing
-pandas
-regex
-python-dotenv
-
-# Progress bars and UI enhancements
-tqdm
-stqdm
+python-dotenv # For .env file handling
 
 # Security and authentication
-bcrypt
-cryptography
-passlib
+passlib[bcrypt] # Pulls in bcrypt for password hashing
 
-# Optional: Advanced NLP models (multilingual support)
-# sentence-transformers[paraphrase-multilingual-mpnet-base-v2]
-
-# Development and testing dependencies (optional)
-pytest
-black
-flake8
-
+# Structured Logging
 structlog
 
-# Optional: Additional model support
-# accelerate # For faster model loading
+# --- Potentially Optional (verify if truly needed or pulled transitively) ---
+# transformers # Often a dependency of sentence-transformers; keep if errors occur without it
+# joblib # scikit-learn might use it internally; if not explicitly used, can be optional
+# cryptography # passlib or other security libs might need it
+
+# --- Development and testing dependencies (comment out for production builds) ---
+# pytest
+# black
+# flake8
