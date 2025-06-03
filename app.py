@@ -555,23 +555,35 @@ def main():
             st.experimental_rerun()
 
         st.divider()
-        if st.button("⚠️ Clear My Analysis History", type="default", use_container_width=True, help="Permanently deletes all saved analyses."):
-            st.session_state.confirm_delete_history = True
+        clear_history_button_key = "clear_history_initial_button"
+        if st.button("⚠️ Clear My Analysis History", key=clear_history_button_key, type="default", use_container_width=True, help="Permanently deletes all your saved analyses."):
+            # Only set to True if it's not already True to avoid unnecessary reruns if already confirming
+            if not st.session_state.get('confirm_delete_history', False):
+                st.session_state.confirm_delete_history = True
+                st.experimental_rerun() # Rerun to show confirmation
 
         if st.session_state.get('confirm_delete_history', False):
-            st.error("Permanently delete ALL past analyses? This cannot be undone.")
+            st.error("Permanently delete ALL past analyses? This action cannot be undone.")
             col_confirm_del, col_cancel_del = st.columns(2)
-            if col_confirm_del.button("Yes, Delete All", type="primary", use_container_width=True):
+
+            # Unique keys for confirmation buttons
+            confirm_delete_button_key = "confirm_delete_yes_button"
+            cancel_delete_button_key = "confirm_delete_cancel_button"
+
+            if col_confirm_del.button("Yes, Delete All", key=confirm_delete_button_key, type="primary", use_container_width=True):
                 if delete_user_analyses(st.session_state.username):
-                    st.success("Analysis history cleared.")
+                    st.success("Your analysis history has been cleared.")
                     st.session_state.analysis_results = None # Clear current view if any
-                # Reset confirmation state regardless of success/failure of deletion
-                st.session_state.confirm_delete_history = False
-                st.experimental_rerun() # Rerun to reflect changes
-            if col_cancel_del.button("Cancel", use_container_width=True):
-                st.session_state.confirm_delete_history = False
-                st.experimental_rerun()
-        st.caption(f"© {datetime.now().year} Resume Optimizer")
+                else:
+                    st.error("Could not clear analysis history.") # delete_user_analyses already shows st.error
+                st.session_state.confirm_delete_history = False # Reset confirmation state
+                st.experimental_rerun() # Rerun to reflect changes and hide confirmation
+
+            if col_cancel_del.button("Cancel Deletion", key=cancel_delete_button_key, use_container_width=True):
+                st.session_state.confirm_delete_history = False # Reset confirmation state
+                st.experimental_rerun() # Rerun to hide confirmation
+
+        st.caption(f"© {datetime.now().year} Resume Optimizer Agent")
 
     if page_selection == "📊 Past Analyses":
         display_past_analyses()
