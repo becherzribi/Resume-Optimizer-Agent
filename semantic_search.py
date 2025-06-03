@@ -29,10 +29,13 @@ class SemanticMatcher:
         # Determine device with GPU optimization
         if use_gpu and torch.cuda.is_available():
             self.device = "cuda"
-            print(f"🚀 Using GPU: {torch.cuda.get_device_name()}")
+            print(f"🚀 SemanticMatcher: Using GPU: {torch.cuda.get_device_name(0)}") # Added device index
         else:
             self.device = "cpu"
-            print("💻 Using CPU for semantic processing")
+            if use_gpu and not torch.cuda.is_available():
+                 print("⚠️ SemanticMatcher: GPU requested but not available. Falling back to CPU.")
+            else:
+                print("💻 SemanticMatcher: Using CPU for semantic processing")
         
         # Select appropriate model
         if model_name is None:
@@ -117,16 +120,19 @@ class SemanticMatcher:
         dim = embeddings.shape[1]
         
         # Use GPU index if available and beneficial
-        if self.device == "cuda" and len(job_sentences) > 100:
+        if self.device == "cuda" and len(job_sentences) > 100: # Consider adjusting this threshold
             try:
-                # GPU index for larger datasets
                 res = faiss.StandardGpuResources()
+                # For GpuIndexFlatIP, FAISS expects L2 normalized vectors if you want cosine similarity.
+                # SentenceTransformer's normalize_embeddings=True does this.
                 self.index = faiss.GpuIndexFlatIP(res, dim)
-                print("🚀 Using GPU-accelerated FAISS index")
+                print("🚀 Using GPU-accelerated FAISS index (GpuIndexFlatIP)")
             except Exception as e:
-                print(f"⚠️ GPU index failed: {e}. Using CPU index.")
+                print(f"⚠️ GPU FAISS index failed: {e}. Using CPU FAISS index (IndexFlatIP).")
+                faiss.normalize_L2(embeddings) # Normalize for IndexFlatIP if not already
                 self.index = faiss.IndexFlatIP(dim)
         else:
+            faiss.normalize_L2(embeddings) # Normalize for IndexFlatIP if not already
             self.index = faiss.IndexFlatIP(dim)
         
         self.index.add(embeddings)

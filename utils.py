@@ -1,7 +1,19 @@
+import io
+from logging import log
 import re
+from turtle import st
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from typing import List, Set, Dict
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER
+from reportlab.lib.units import inch
+from reportlab.lib.colors import HexColor
+from reportlab.lib.pagesizes import letter
+
+from app import text_to_pdf_bytes
+
 
 def compute_token_similarity(text1: str, text2: str) -> float:
     """
@@ -217,3 +229,117 @@ def suggest_action_verbs(resume_text: str) -> List[str]:
                 suggestions.append(f"Replace '{weak_verb}' with stronger alternatives: {', '.join(alternatives)}")
     
     return suggestions
+
+def generate_professional_pdf_bytes(resume_text: str, title: str = "Resume") -> bytes:
+    """
+    Generates a more professionally formatted PDF from plain text resume using ReportLab Platypus.
+    Tries to infer sections and apply basic styling.
+    """
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer,
+                            pagesize=letter,
+                            rightMargin=0.75*inch, leftMargin=0.75*inch,
+                            topMargin=0.75*inch, bottomMargin=0.75*inch,
+                            title=title)
+    styles = getSampleStyleSheet()
+
+    # Define custom styles
+    # Main Title (e.g., Candidate Name - often the first line)
+    styles.add(ParagraphStyle(name='ResumeTitle',
+                              parent=styles['h1'],
+                              fontName='Helvetica-Bold',
+                              fontSize=18,
+                              spaceAfter=0.2*inch,
+                              alignment=TA_CENTER))
+
+    # Section Headers (e.g., Experience, Education, Skills)
+    styles.add(ParagraphStyle(name='SectionHeader',
+                              parent=styles['h2'],
+                              fontName='Helvetica-Bold',
+                              fontSize=12,
+                              spaceBefore=0.2*inch,
+                              spaceAfter=0.1*inch,
+                              textColor=HexColor('#2E7D32'))) # Example color
+
+    # Body text for bullet points or general text
+    styles.add(ParagraphStyle(name='BodyText',
+                              parent=styles['Normal'],
+                              fontName='Helvetica',
+                              fontSize=10,
+                              leading=12, # Line spacing
+                              spaceAfter=0.05*inch,
+                              alignment=TA_LEFT))
+
+    # Bullet points
+    styles.add(ParagraphStyle(name='BulletPoint',
+                              parent=styles['BodyText'],
+                              leftIndent=0.25*inch,
+                              bulletIndent=0.1*inch,
+                              firstLineIndent=-0.05*inch, # Hanging indent for bullet
+                              spaceAfter=0.05*inch))
+
+
+    story = []
+
+    # Heuristic to identify potential section headers (all caps or common resume headers)
+    # This is very basic and can be improved significantly with more sophisticated parsing
+    section_keywords = ['SUMMARY', 'PROFILE', 'OBJECTIVE', 'EXPERIENCE', 'EMPLOYMENT',
+                        'EDUCATION', 'SKILLS', 'PROJECTS', 'ACTIVITIES',
+                        'AWARDS', 'CERTIFICATIONS', 'REFERENCES', 'TECHNICAL SKILLS',
+                        'PROFESSIONAL EXPERIENCE', 'WORK EXPERIENCE']
+
+    lines = resume_text.splitlines()
+
+    if not lines:
+        story.append(Paragraph("No content provided for the resume.", styles['BodyText']))
+        doc.build(story)
+        return buffer.getvalue()
+
+    # Attempt to make the first non-empty line the title
+    first_content_line_index = 0
+    for i, line in enumerate(lines):
+        if line.strip():
+            story.append(Paragraph(line.strip(), styles['ResumeTitle']))
+            first_content_line_index = i + 1
+            break
+    else: # No content lines found
+        story.append(Paragraph("Resume Appears Empty", styles['ResumeTitle']))
+
+
+    for line in lines[first_content_line_index:]:
+        stripped_line = line.strip()
+        if not stripped_line:
+            # story.append(Spacer(1, 0.1*inch)) # Add small space for empty lines if desired
+            continue
+
+        is_section_header = False
+        for keyword in section_keywords:
+            if stripped_line.upper().startswith(keyword) and len(stripped_line) < 40: # Simple check
+                is_section_header = True
+                break
+        # A common pattern for section headers is all caps
+        if not is_section_header and stripped_line.isupper() and len(stripped_line.split()) < 5 and len(stripped_line) > 3:
+             is_section_header = True
+
+
+        if is_section_header:
+            story.append(Paragraph(stripped_line, styles['SectionHeader']))
+        elif stripped_line.startswith(('-', '•', '*', '>', 'o')): # Basic bullet detection
+            # Remove bullet character and use ReportLab's bulletText
+            bullet_text = stripped_line[1:].strip()
+            story.append(Paragraph(bullet_text, styles['BulletPoint'], bulletText='•'))
+        else:
+            story.append(Paragraph(stripped_line, styles['BodyText']))
+
+    try:
+        doc.build(story)
+        pdf_bytes = buffer.getvalue()
+        log.info("Professional PDF generated successfully using Platypus")
+        return pdf_bytes
+    except Exception as e:
+        log.error("Professional PDF generation failed with Platypus", error=str(e), exc_info=True)
+        st.error(f"Error generating professional PDF: {e}. Falling back to basic PDF.")
+        # Fallback to the simpler PDF generation if Platypus fails
+        return text_to_pdf_bytes(resume_text) # Your original simple PDF generator
+    finally:
+        buffer.close()

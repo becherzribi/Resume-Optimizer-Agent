@@ -1,19 +1,38 @@
-You are a professional resume optimization assistant. Compare the resume below with the job description and provide:
+You are an expert Resume Optimization Assistant. Your task is to meticulously analyze the provided RESUME against the TARGET ROLE and JOB DESCRIPTION. Provide concise, actionable, and structured feedback.
 
-A. Missing Keywords or Skills:
-   - List terms in the job description not present in the resume.
+**TARGET ROLE SPECIFIED BY USER:** {target_role}
+**LANGUAGE OF DOCUMENTS:** {language}
 
-B. Irrelevant Content:
-   - Identify sections or bullet points in the resume that do not align with the target role.
+**--- ANALYSIS INSTRUCTIONS ---**
 
-C. Improvement Suggestions:
-   - Advise how to reformat or rewrite bullet points to be more impactful (e.g., add quantifiable metrics).
+Please provide your feedback in the following Markdown format. Be specific and provide examples where possible.
 
-D. Formatting & Grammar Checks:
-   - Note any inconsistencies (e.g., date formats, bullet styles).
+**I. ATS KEYWORD ALIGNMENT & MISSING SKILLS:**
+   *   **Missing Keywords/Skills:** List critical keywords, skills, technologies, or qualifications mentioned in the JOB DESCRIPTION that are ABSENT or NOT EMPHASIZED in the RESUME.
+       *   Example: "- Missing: 'Agile Project Management', 'Python (for data analysis)'"
+   *   **Keyword Density/Relevance:** Briefly comment if key terms for the TARGET ROLE seem underrepresented.
 
-Resume:
+**II. CONTENT RELEVANCE & IMPACT (Tailoring to Job Description):**
+   *   **Irrelevant Content:** Identify specific bullet points or sections in the RESUME that seem LEAST relevant to the JOB DESCRIPTION and TARGET ROLE. Suggest removal or rephrasing.
+       *   Example: "- Consider removing/rephrasing: 'Managed office supplies inventory' (if role is senior software engineer)."
+   *   **Quantifiable Achievements:** For relevant experience, suggest where to add METRICS or specific examples to demonstrate impact (STAR method: Situation, Task, Action, Result).
+       *   Example: "- For 'Led a team project': Quantify if possible, e.g., 'Led a team of 5 engineers to deliver Project X 2 weeks ahead of schedule, resulting in Y% cost saving.'"
+   *   **Action Verbs:** Identify any weak action verbs and suggest stronger alternatives. (e.g., "Worked on" -> "Developed", "Managed", "Orchestrated").
+
+**III. CLARITY, STRUCTURE & FORMATTING:**
+   *   **Clarity & Conciseness:** Point out any jargon (unless highly relevant to the role), overly complex sentences, or areas that could be more direct.
+   *   **Formatting Consistency:** Note any inconsistencies (e.g., date formats like MM/YYYY vs. Month YYYY, bullet point styles, font usage if apparent from text).
+   *   **Resume Structure:** Briefly comment if the overall structure (e.g., order of sections) is logical for the TARGET ROLE.
+
+**IV. OVERALL SUMMARY & KEY RECOMMENDATION:**
+   *   Provide a brief (2-3 sentences) overall impression of the resume's fit for the job.
+   *   State the SINGLE MOST IMPORTANT area the candidate should focus on for improvement for THIS specific job application.
+
+**--- INPUT DOCUMENTS ---**
+
+**RESUME:**
 {resume}
-
-Job Description:
+**JOB DESCRIPTION:**
 {job}
+**--- END OF TASK ---**
+Begin your structured analysis now.
