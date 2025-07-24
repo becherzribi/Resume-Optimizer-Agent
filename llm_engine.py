@@ -1,5 +1,6 @@
 # llm_engine.py
-from logging import log
+import structlog
+log = structlog.get_logger(__name__)
 from langchain_community.llms import Ollama
 import torch
 from typing import Optional, Dict, Any
